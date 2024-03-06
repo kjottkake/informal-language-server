@@ -11,13 +11,6 @@ const PORT = 3000;
 
 const vocabObj = {};
 
-
-// //function for adding word to individual list
-// function addWord(original, translation){
-//     words[original] = translation;
-// }
-
-
 app.use(bodyParser.json());
 
 // Your words storage logic remains the same
