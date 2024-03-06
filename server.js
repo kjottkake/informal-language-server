@@ -9,6 +9,15 @@ const pdf = new PDFDocument(); //our document
 const app = express();
 const PORT = 3000;
 
+const vocabObj = {};
+
+
+// //function for adding word to individual list
+// function addWord(original, translation){
+//     words[original] = translation;
+// }
+
+
 app.use(bodyParser.json());
 
 // Your words storage logic remains the same
@@ -29,9 +38,10 @@ app.post('/translateWord', async (req, res) => {
         });
 
         const translatedText = response.data.translatedText + " "; // Adds space
-
+        
         // Add to object and array logic remains the same
-
+        addWord(word, translatedText);
+        console.log("words object: ", vocabObj);
         // Respond to the client
         res.json({ message: "Word translated and added.", word, translatedText });
 
@@ -44,3 +54,8 @@ app.post('/translateWord', async (req, res) => {
 app.listen(PORT, () => {
     console.log(`Server is running on http://localhost:${PORT}`);
 });
+
+//function for adding word to individual list
+function addWord(original, translation){
+    vocabObj[original] = translation;
+}
