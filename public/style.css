@@ -1,0 +1,59 @@
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f7f7f7;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+  }
+
+  .container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px; /* This adds space between the canvas and the form */
+  }
+
+span {
+  font-size: 3rem;
+}
+
+
+#wordCloudBoard {
+margin-top: 2%;
+width: 95%;
+height: 700px; /* Adjust as needed */
+/* border: 1px solid red; */
+}
+  
+.form-group {
+margin-bottom: 1rem;
+}
+
+label {
+display: block;
+margin-bottom: .5rem;
+color: #333;
+}
+
+input[type="text"],
+button {
+width: 100%;
+padding: .75rem;
+border-radius: 5px;
+border: 1px solid #ddd;
+box-sizing: border-box;
+}
+
+button {
+background-color: #22a6b3;
+color: white;
+border: none;
+margin-top: 1rem;
+cursor: pointer;
+transition: background-color 0.3s ease;
+}
+
+button:hover {
+background-color: #1e90ff;
+}
