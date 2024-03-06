@@ -1,6 +1,10 @@
-const express = require('express');
-const bodyParser = require('body-parser');
-const axios = require('axios');
+const express = require('express'); //server operations
+const bodyParser = require('body-parser'); //parses body for stuff
+const axios = require('axios'); //requests
+const PDFDocument = require('pdfkit'); //library to generate pdfs
+const fs = require('fs'); //gets file input
+const pdf = new PDFDocument(); //our document
+
 
 const app = express();
 const PORT = 3000;
