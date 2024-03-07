@@ -6,8 +6,9 @@ const fs = require('fs'); //gets file input
 
 
 
+
 const app = express();
-const PORT = 3000;
+const PORT = 3001;
 
 const vocabObj = {};
 
