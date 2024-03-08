@@ -8,7 +8,7 @@ const http = require('http');
 const server = http.createServer(app);
 const { Server } = require("socket.io");
 const io = new Server(server);
-
+const path = require('path');
 
 io.on('connection', (socket) => {
   console.log('a user connected');
@@ -37,7 +37,8 @@ app.use(bodyParser.json());
 
 
 // // Your words storage logic remains the same
-app.use(express.static('public'));
+// app.use(express.static('public'));
+app.use(express.static(path.join(__dirname, 'public')));
 
 
 // Dynamic namespace creation endpoint
@@ -50,6 +51,12 @@ app.get('/create-namespace', (req, res) => {
   });
   // Respond with the created namespace
   res.json({ namespace });
+});
+
+app.get('/room', (req, res) => {
+  // Serve the room HTML, which includes logic to connect to the room's namespace based on the URL's query parameter
+  // res.sendFile(__dirname + '/room.html');
+  res.sendFile(path.join(__dirname, 'public', 'room.html'));
 });
 
 

@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Chat Room</title>
+    <style>
+        ul { list-style-type: none; margin: 0; padding: 0; }
+        li { padding: 8px; margin-bottom: 2px; background-color: #f3f3f3; }
+        input, button { margin-top: 10px; }
+    </style>
+</head>
+<body>
+    <h2>Chat Room</h2>
+    <ul id="messages"></ul>
+    <form id="form" action="">
+        <input id="input" autocomplete="off" /><button>Send</button>
+    </form>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        // Extract the namespace from the URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const namespace = urlParams.get('namespace');
+
+        // Connect to the Socket.IO server with the namespace
+        const socket = io(namespace);
+
+        // Listening for messages from the server
+        socket.on('message', function(msg) {
+            const item = document.createElement('li');
+            item.textContent = msg;
+            document.getElementById('messages').appendChild(item);
+            window.scrollTo(0, document.body.scrollHeight);
+        });
+
+        // Sending messages to the server
+        const form = document.getElementById('form');
+        const input = document.getElementById('input');
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            if (input.value) {
+                socket.emit('chat message', input.value);
+                input.value = '';
+            }
+        });
+    </script>
+</body>
+</html>

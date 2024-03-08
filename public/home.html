@@ -85,6 +85,8 @@
             socket.on('message', (msg) => {
               alert(msg);
             });
+            // Redirect the user to the room
+            window.location.href = `/room?namespace=${encodeURIComponent(namespace)}`;
           })
           .catch(error => console.error('Error:', error));
       });
