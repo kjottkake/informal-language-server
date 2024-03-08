@@ -1,16 +1,31 @@
 var socket = io('http://localhost:3002');
 
-
 // Listen for 'word-added' event emitted by the server
 socket.on('word-added', function(data) {
-    addWordToCloud(data.word, data.translation);
+    // Add the word to the cloud without emitting back to server
+    addWordToCloudFromServer(data.word, data.translation);
 });
+
+// This function only adds the word to the cloud when received from the server
+function addWordToCloudFromServer(word, tT) {
+    var wordCloud = document.getElementById('wordCloudBoard');
+    var newWordSpan = document.createElement('span');
+    var newWordDefSpan = document.createElement('span');
+    
+    newWordSpan.style.color = getRandomColor();
+    newWordSpan.style.fontSize = `${getRandomSize()}px`;
+    newWordSpan.textContent = word + "  "; // Add space after word
+    newWordDefSpan.textContent = tT;
+
+    wordCloud.appendChild(newWordSpan);
+    wordCloud.appendChild(newWordDefSpan);
+}
 
 document.getElementById('wordForm').addEventListener('submit', function(event) {
     event.preventDefault(); // Prevent the form from submitting the traditional way
-
-    const word = document.getElementById('wordInput').value;
-    console.log(word)
+    const wordInput = document.getElementById('wordInput');
+    const word = wordInput.value;
+    console.log(word);
     fetch('/translateWord', {
         method: 'POST',
         headers: {
@@ -20,20 +35,26 @@ document.getElementById('wordForm').addEventListener('submit', function(event) {
     })
     .then(response => response.json())
     .then(data => {
-        // Display the translation result
-        // document.getElementById('translationResult').textContent = `Translation: ${data.translatedText}`;
-        let translatedText = data.translatedText + " " //adds space
-        addWordToCloud(word, translatedText);
-        this.reset(); // clears form
+        let translatedText = data.translatedText + " "; //adds space
+        // Add the word to the cloud and emit to the server
+        addWordToCloudAndEmit(word, translatedText);
+        wordInput.value = ''; // clears form
     })
     .catch(error => {
         console.error('Error during translation:', error);
         document.getElementById('translationResult').textContent = 'Translation failed.';
-        // this.reset();
     });
 });
 
+function addWordToCloudAndEmit(word, tT) {
+    // Add the word to the cloud locally
+    addWordToCloudFromServer(word, tT);
 
+    // Emit the event with the word and translation to the server
+    socket.emit('add-word', { word: word, translation: tT });
+}
+
+// ... rest of your client code
 document.querySelector('.download').addEventListener('click', function() {
     fetch('/generate-pdf', {
       method: 'GET', // Changed to a GET request since no data is being sent
@@ -63,25 +84,3 @@ function getRandomSize() {
     const maxSize = 128;
     return Math.floor(Math.random() * (maxSize - minSize + 1)) + minSize;
 }
-
-function addWordToCloud(word, tT) {
-    // This function would add the word to the visual word cloud
-    // For the purposes of this example, we'll just append it to the div
-    var wordCloud = document.getElementById('wordCloudBoard');
-    var newWordSpan = document.createElement('span');
-
-    var newWordDefSpan = document.createElement('span');
-    
-    newWordSpan.style.color = getRandomColor();
-    newWordSpan.style.fontSize = `${getRandomSize()}px`;
-    newWordSpan.textContent = word + "  "; // Add space after word
-
-    newWordDefSpan.textContent = tT
-
-    wordCloud.appendChild(newWordSpan);
-    wordCloud.appendChild(newWordDefSpan);
-
-      // Emit the event with the word and translation to the server
-      socket.emit('add-word', { word: word, translation: tT });
-
-  }
