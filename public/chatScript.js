@@ -3,11 +3,11 @@ var socket = io('http://localhost:3002');
 // Listen for 'word-added' event emitted by the server
 socket.on('word-added', function(data) {
     // Add the word to the cloud without emitting back to server
-    addWordToCloudFromServer(data.word, data.translation);
+    showWord(data.word, data.translation);
 });
 
 // This function only adds the word to the cloud when received from the server
-function addWordToCloudFromServer(word, tT) {
+function showWord(word, tT) {
     var wordCloud = document.getElementById('wordCloudBoard');
     var newWordSpan = document.createElement('span');
     var newWordDefSpan = document.createElement('span');
@@ -37,7 +37,7 @@ document.getElementById('wordForm').addEventListener('submit', function(event) {
     .then(data => {
         let translatedText = data.translatedText + " "; //adds space
         // Add the word to the cloud and emit to the server
-        addWordToCloudAndEmit(word, translatedText);
+        submitWord(word, translatedText);
         wordInput.value = ''; // clears form
     })
     .catch(error => {
@@ -46,15 +46,15 @@ document.getElementById('wordForm').addEventListener('submit', function(event) {
     });
 });
 
-function addWordToCloudAndEmit(word, tT) {
+function submitWord(word, tT) {
     // Add the word to the cloud locally
-    addWordToCloudFromServer(word, tT);
+    showWord(word, tT);
 
     // Emit the event with the word and translation to the server
     socket.emit('add-word', { word: word, translation: tT });
 }
 
-// ... rest of your client code
+//download
 document.querySelector('.download').addEventListener('click', function() {
     fetch('/generate-pdf', {
       method: 'GET', // Changed to a GET request since no data is being sent
