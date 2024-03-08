@@ -9,10 +9,24 @@ const server = http.createServer(app);
 const { Server } = require("socket.io");
 const io = new Server(server);
 
+
 io.on('connection', (socket) => {
-    console.log('a user connected');
+  console.log('a user connected');
+
+
+  socket.on('disconnect', ()=> {
+    console.log('User disconnected');
+  })
+  
+  // Listen for 'add-word' event from clients
+  socket.on('add-word', (data) => {
+      console.log('Word received from socket: ', data);
+      // Broadcast the word to all other clients
+      socket.broadcast.emit('word-added', data);
   });
 
+  
+});
 
 const PORT = 3002;
 
