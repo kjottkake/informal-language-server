@@ -1,58 +1,67 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Room Entry</title>
-<style>
-  body {
-    font-family: Arial, sans-serif;
-    background-color: #f4f4f4;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    margin: 0;
-  }
-  .container {
-    background-color: white;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    width: 300px;
-  }
-  .title {
-    font-size: 32px;
-    color: #333;
-    text-align: center;
-    margin-bottom: 20px;
-  }
-  .input-group {
-    margin-bottom: 10px;
-  }
-  input[type="text"] {
-    width: 100%;
-    padding: 10px;
-    margin: 10px 0;
-    border-radius: 4px;
-    border: 1px solid #ddd;
-    box-sizing: border-box; /* Add this line to include padding in input width */
-  }
-  .button {
-    width: 100%;
-    margin-bottom: 12px;
-    padding: 10px;
-    border: none;
-    border-radius: 4px;
-    color: white;
-    background-color: #007bff;
-    cursor: pointer;
-  }
-  .button.orange {
-    background-color: #f0ad4e;
-  }
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Room Entry</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f4;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+
+    .container {
+      background-color: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      width: 300px;
+    }
+
+    .title {
+      font-size: 32px;
+      color: #333;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .input-group {
+      margin-bottom: 10px;
+    }
+
+    input[type="text"] {
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0;
+      border-radius: 4px;
+      border: 1px solid #ddd;
+      box-sizing: border-box;
+      /* Add this line to include padding in input width */
+    }
+
+    .button {
+      width: 100%;
+      margin-bottom: 12px;
+      padding: 10px;
+      border: none;
+      border-radius: 4px;
+      color: white;
+      background-color: #007bff;
+      cursor: pointer;
+    }
+
+    .button.orange {
+      background-color: #f0ad4e;
+    }
+  </style>
 </head>
+
 <body>
   <div class="container">
     <div class="title">ordcafe.io</div>
@@ -60,11 +69,28 @@
       <input type="text" id="room-code" placeholder="1234">
     </div>
     <button class="button">Enter</button>
-    <button class="button orange">Create Room</button>
+    <button id="createEndpoint" class="button orange">Create Room</button>
   </div>
+  
   <script src="/socket.io/socket.io.js"></script>
   <script>
-    var socket = io();
-  </script> 
+    document.addEventListener('DOMContentLoaded', function () {
+      const btn = document.getElementById('createEndpoint');
+      btn.addEventListener('click', function () {
+        fetch('/create-namespace')
+          .then(response => response.json())
+          .then(data => {
+            const namespace = data.namespace;
+            const socket = io(namespace);
+            socket.on('message', (msg) => {
+              alert(msg);
+            });
+          })
+          .catch(error => console.error('Error:', error));
+      });
+    });
+
+  </script>
 </body>
+
 </html>

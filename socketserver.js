@@ -40,6 +40,18 @@ app.use(bodyParser.json());
 app.use(express.static('public'));
 
 
+// Dynamic namespace creation endpoint
+app.get('/create-namespace', (req, res) => {
+  const namespace = `/namespace-${Math.random().toString(36).substring(2, 7)}`;
+  const nsp = io.of(namespace);
+  nsp.on('connection', (socket) => {
+    console.log(`someone connected to ${namespace}`);
+    socket.emit('message', `Welcome to ${namespace}`);
+  });
+  // Respond with the created namespace
+  res.json({ namespace });
+});
+
 
 // Route to generate PDF
 app.get('/generate-pdf', (req, res) => {
