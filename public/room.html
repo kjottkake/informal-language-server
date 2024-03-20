@@ -1,20 +1,29 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Chat Room</title>
-    <style>
-        ul { list-style-type: none; margin: 0; padding: 0; }
-        li { padding: 8px; margin-bottom: 2px; background-color: #f3f3f3; }
-        input, button { margin-top: 10px; }
-    </style>
-</head>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Document</title>
+        <link rel="stylesheet" href="./style.css">
+        <script src="https://kit.fontawesome.com/f30d786346.js" crossorigin="anonymous"></script>
+    </head>
 <body>
     <h2>Ordcafe.io</h2>
     <ul id="messages"></ul>
     <form id="form" action="">
         <input id="input" autocomplete="off" /><button>Send</button>
     </form>
+    <button class="download">
+        Download PDF</button>
+    <div class="container">
+        <div id="wordCloudBoard">
+            <!-- The word cloud will appear here -->
+        </div>
+        <form id="wordForm">
+            <input type="text" id="wordInput" placeholder="Enter a word" />
+            <button type="submit">Send it!</button>
+        </form>
+    </div>
 
     <script src="/socket.io/socket.io.js"></script>
     <script>
