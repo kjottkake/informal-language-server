@@ -52,8 +52,8 @@ app.post('/translateWord', async (req, res) => {
     try {
         const response = await axios.post("http://localhost:5000/translate", {
             q: word,
-            source: "nb",
-            target: "en",
+            source: "en",
+            target: "zh",
             format: "text",
             api_key: ""
         }, {
