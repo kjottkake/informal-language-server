@@ -1,10 +1,26 @@
+const params = new URLSearchParams(window.location.search);
+const roomID = params.get('namespace');
+
+
 var socket = io('http://localhost:3002');
 
-// Listen for 'word-added' event emitted by the server
-socket.on('word-added', function(data) {
-    // Add the word to the cloud without emitting back to server
-    showWord(data.word, data.translation);
-});
+
+// socket.emit('join-room', 'your-room-id');
+socket.emit('join-room', roomID); //join room
+
+// // Listen for 'word-added' event emitted by the server
+// socket.on('word-added', function(data) {
+//     // Add the word to the cloud without emitting back to server
+//     showWord(data.word, data.translation);
+// });
+
+// Listen for 'word-added' events specifically in this room
+socket.on('word-added', (data) => {
+    if(data.room === roomID) {
+      // Add the word to the cloud only if it's meant for this room
+      showWord(data.word, data.translation);
+    }
+  });
 
 // This function only adds the word to the cloud when received from the server
 function showWord(word, tT) {
@@ -51,7 +67,7 @@ function submitWord(word, tT) {
     showWord(word, tT);
 
     // Emit the event with the word and translation to the server
-    socket.emit('add-word', { word: word, translation: tT });
+    socket.emit('add-word', { word: word, translation: tT, room: roomID});
 }
 
 //download
