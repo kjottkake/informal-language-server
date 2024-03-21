@@ -77,3 +77,28 @@ font-size: 1rem;
 .terms-link a:hover {
 text-decoration: underline;
 }
+
+.direction {
+  padding: 20px;
+}
+
+.dropdown {
+  display: flex;
+  flex-wrap: wrap; /* This allows for responsiveness, columns will stack on smaller screens */
+  gap: 10px; /* Adjust the gap between columns */
+  justify-content: center; /* This centers the children horizontally */
+  align-items: center; /* This centers the children vertically */
+}
+
+.l1-column,
+.l2-column {
+  flex: 1; /* This makes both columns equal width */
+  /* ... your other styles ... */
+  padding-bottom: 40px;
+  /* border: 1px solid pink; */
+}
+
+
+label {
+  margin: 20px;
+}

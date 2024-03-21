@@ -79,4 +79,30 @@ a {
 a:link {color: black;}      /* unvisited link */
 a:visited {color: black;}   /* visited link */
 a:hover {color: black;}     /* mouse over link */
-a:active {color: black;}    /* 
+a:active {color: black;}    
+
+
+
+/* .l1-column {
+  order: 1;
+}
+
+.l2-column {
+  order: 2;
+} */
+.directions {
+  
+}
+
+.columns {
+  display: flex;
+  flex-wrap: wrap; /* This allows for responsiveness, columns will stack on smaller screens */
+  gap: 10px; /* Adjust the gap between columns */
+}
+
+.l1-column,
+.l2-column {
+  flex: 1; /* This makes both columns equal width */
+  min-width: 220px; /* Adjust minimum width as necessary */
+  /* ... your other styles ... */
+}

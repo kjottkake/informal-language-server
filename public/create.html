@@ -9,30 +9,40 @@
 </head>
 
 <body>
-    <h1>ordcafe.io</h1>
+    <div class="main-content">
+      <div class="title">ordcafe.io</div>
+      <div class="direction">Create a room for everyone in your session to join</div>
   <div class="container">
-    <div class="title">create a room</div>
-
-    <label for="cars">Session Language:</label>
-
-    <select name="l2" id="l2">
-      <option value="norwegian">Norwegian</option>
-      <option value="english">English</option>
-      <option value="spanish">Spanish</option>
-      <option value="chinese">Chinese</option>
-    </select> 
-
-    <label for="cars">Translate Language:</label>
-    <select name="l1" id="l1">
-        <option value="norwegian">Norwegian</option>
-        <option value="english">English</option>
-        <option value="spanish">Spanish</option>
-        <option value="chinese">Chinese</option>
+    <div class="dropdown">
+    <!-- <div class="title">create a room</div> -->
+    <div class="l2-column">
+      
+      <select name="l2" id="l2">
+        <option value="norwegian">🇳🇴 Norwegian</option>
+        <option value="english">🇬🇧 English</option>
+        <option value="spanish">🇪🇸 Spanish</option>
+        <option value="chinese">🇨🇳 Chinese</option>
       </select> 
+      <label for="l2">Cafe Session</label>
+    </div>
 
+    <div class="l1-column">
+      <select name="l1" id="l1">
+        <option value="norwegian">🇳🇴 Norwegian</option>
+        <option value="english">🇬🇧 English</option>
+        <option value="spanish">🇪🇸 Spanish</option>
+        <option value="chinese">🇨🇳 Chinese</option>
+        </select> 
+        <label for="l1">Lingua Franca</label>
+    </div>
+  </div>
     <button id="createEndpoint" class="button orange">Create Room</button>
   </div>
-
+  <div class="terms-link">
+    <a href="terms.html">Terms</a> |
+    <a href="privacy.html">Privacy</a>
+  </div>
+</div>
   <script>
   </script>
 </body>
