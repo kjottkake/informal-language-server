@@ -1,3 +1,6 @@
+//SERVER CODE
+
+
 const express = require('express'); //server operations
 const bodyParser = require('body-parser'); //parses body for stuff
 const axios = require('axios'); //requests
@@ -47,7 +50,7 @@ app.get('/create-namespace', (req, res) => {
   const nsp = io.of(namespace);
   nsp.on('connection', (socket) => {
     console.log(`someone connected to ${namespace}`);
-    socket.emit('message', `Welcome to ${namespace}`);
+    socket.emit('message', `Room code: ${namespace}`);
   });
   // Respond with the created namespace
   res.json({ namespace });

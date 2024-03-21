@@ -8,11 +8,8 @@
         <script src="https://kit.fontawesome.com/f30d786346.js" crossorigin="anonymous"></script>
     </head>
 <body>
-    <h2>Ordcafe.io</h2>
+    <h1>ordcafe.io</h1>
     <ul id="messages"></ul>
-    <form id="form" action="">
-        <input id="input" autocomplete="off" /><button>Send</button>
-    </form>
     <button class="download">
         Download PDF</button>
     <div class="container">
@@ -30,28 +27,29 @@
         // Extract the namespace from the URL
         const urlParams = new URLSearchParams(window.location.search);
         const namespace = urlParams.get('namespace');
-
+        console.log("namespace: " + namespace)
         // Connect to the Socket.IO server with the namespace
-        const socket = io(namespace);
+        // const socket = io(namespace);
 
         // Listening for messages from the server
-        socket.on('message', function(msg) {
-            const item = document.createElement('li');
-            item.textContent = msg;
-            document.getElementById('messages').appendChild(item);
-            window.scrollTo(0, document.body.scrollHeight);
-        });
+        // socket.on('message', function(msg) {
+        //     const item = document.createElement('li');
+        //     item.textContent = msg;
+        //     document.getElementById('messages').appendChild(item);
+        //     window.scrollTo(0, document.body.scrollHeight);
+        // });
 
-        // Sending messages to the server
-        const form = document.getElementById('form');
-        const input = document.getElementById('input');
-        form.addEventListener('submit', function(e) {
-            e.preventDefault();
-            if (input.value) {
-                socket.emit('chat message', input.value);
-                input.value = '';
-            }
-        });
+        // // Sending messages to the server
+        // const form = document.getElementById('form');
+        // const input = document.getElementById('input');
+        // form.addEventListener('submit', function(e) {
+        //     e.preventDefault();
+        //     if (input.value) {
+        //         socket.emit('chat message', input.value);
+        //         input.value = '';
+        //     }
+        // });
     </script>
+    <script src="/chatScript.js"></script>
 </body>
 </html>
