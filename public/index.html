@@ -1,30 +1,129 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <link rel="stylesheet" href="./style.css">
-    <script src="https://kit.fontawesome.com/f30d786346.js" crossorigin="anonymous"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Room Entry</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f4;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+
+    .main-content {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 100%;
+    }
+
+    .container {
+      background-color: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      width: 300px;
+    }
+
+    .title {
+      font-size: 32px;
+      color: #333;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .input-group {
+      margin-bottom: 10px;
+    }
+
+    input[type="text"] {
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0;
+      border-radius: 4px;
+      border: 1px solid #ddd;
+      box-sizing: border-box; /* Add this line to include padding in input width */
+      text-align: center;
+      font-size: 1.25rem;
+    }
+
+    .button {
+      width: 100%;
+      margin-bottom: 12px;
+      padding: 10px;
+      border: none;
+      border-radius: 4px;
+      color: #fff;
+      background-color: #485460;
+      cursor: pointer;
+      font-size: 1.25rem;
+    }
+
+    .button.orange {
+      background-color: #ffc048;
+    }
+
+    .terms-link {
+  position: absolute;
+  bottom: 20px;
+  width: 100%;
+  text-align: center;
+}
+
+.terms-link a {
+  color: #333;
+  text-decoration: none;
+  font-size: 1rem;
+}
+
+.terms-link a:hover {
+  text-decoration: underline;
+}
+  </style>
 </head>
+
 <body>
-    <button class="download">
-        Download PDF</button>
+  <div class="main-content">
+    <div class="title">ordcafe.io</div>
     <div class="container">
-        <div id="wordCloudBoard">
-            <!-- The word cloud will appear here -->
-        </div>
-        <form id="wordForm">
-            <input type="text" id="wordInput" placeholder="Enter a word" />
-            <button type="submit">Send it!</button>
-        </form>
+      <div class="input-group">
+        <input type="text" id="room-code" placeholder="1234">
+      </div>
+      <button class="button">Enter</button>
+      <button id="createEndpoint" class="button orange">Create Room</button>
     </div>
-<script src="https://kit.fontawesome.com/f30d786346.js" crossorigin="anonymous"></script>
-<script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
-<script src="/chatScript.js"></script>
-<!-- <script src="/script.js"></script> -->
+    <div class="terms-link">
+        <a href="terms.html">Terms</a> |
+        <a href="privacy.html">Privacy</a>
+      </div>
+  </div>
 
-
+  <script src="/socket.io/socket.io.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const btn = document.getElementById('createEndpoint');
+      btn.addEventListener('click', function () {
+        fetch('/create-namespace')
+          .then(response => response.json())
+          .then(data => {
+            const namespace = data.namespace;
+            const socket = io(namespace);
+            socket.on('message', (msg) => {
+              alert(msg);
+            });
+            // Redirect the user to the room
+            window.location.href = `/room?namespace=${encodeURIComponent(namespace)}`;
+          })
+          .catch(error => console.error('Error:', error));
+      });
+    });
+  </script>
 </body>
-</html>
 
+</html>
