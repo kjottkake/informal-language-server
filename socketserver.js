@@ -20,16 +20,9 @@ io.on('connection', (socket) => {
     socket.join(room);  //estbalishing connection with room?
   });   //establishing connection with room?
   
-  // // Listen for 'add-word' event from clients
-  // socket.on('add-word', (data) => {
-  //     console.log('Word received from socket: ', data);
-  //     // Broadcast the word to all other clients
-  //     socket.broadcast.emit('word-added', data);
-  // });
   socket.on('add-word', (data) => {
-    // Assuming data contains a 'room' property with the room ID
-    // io.to(data.room).emit('word-added', { word: data.word, translation: data.translation });
-    io.to(data.room).emit('word-added', data);
+    console.log('Word received from socket: ', data);
+    socket.to(data.room).emit('word-added', data);
   });
 
 
