@@ -23,15 +23,14 @@ io.on('connection', (socket) => {
     socket.join(room);  //estbalishing connection with room
   });   //establishing connection with room
   
-  // socket.on('add-word', (data) => { //when add-word is called, then do this
-  //   console.log('Word received from socket: ', data);
-  //   socket.to(data.room).emit('word-added', data);
-  // });
   socket.on('add-word', (data) => {
     console.log('Word received from socket: ', data);
     addWord(data.room, data.word, data.translation);
-    socket.to(data.room).emit('word-added', data);
-});
+    // Retrieve the word, its translation, color, and size from vocabObj
+    const { translation, color, size } = vocabObj[data.room][data.word];
+    // Emit the event with all data, ensuring consistency across clients
+    io.in(data.room).emit('word-added', { word: data.word, translation, color, size, room: data.room });
+  });
 
 
   socket.on('disconnect', ()=> { //when a user disconnects, do this. 
@@ -70,7 +69,7 @@ app.get('/generate-pdf', (req, res) => {
   
   pdf.fontSize(12);
   for (const original in wordsList) {
-      const translation = wordsList[original];
+      const translation = wordsList[original].translation;
       pdf.text(`${original} - ${translation}`, {
         paragraphGap: 5,
         indent: 20,
@@ -116,18 +115,22 @@ server.listen(PORT, () => {
 
 function addWord(roomId, original, translation) {
   if (!vocabObj[roomId]) {
-      vocabObj[roomId] = {}; // Initialize the object for the room if it doesn't exist
+    vocabObj[roomId] = {}; // Initialize the object for the room if it doesn't exist
   }
-  vocabObj[roomId][original] = translation;
+  if (!vocabObj[roomId][original]) { // Check if the word is already added
+    const color = getRandomColor();
+    const size = getRandomSize();
+    vocabObj[roomId][original] = { translation, color, size }; // Store translation, color, and size
+  }
 }
 
+
 function getRandomColor() {
-  const randomColor = Math.floor(Math.random()*16777215).toString(16);
+  const randomColor = Math.floor(Math.random() * 16777215).toString(16);
   return `#${randomColor}`;
 }
 
 function getRandomSize() {
-  // Define the range for your font sizes, e.g., between 12px and 36px
   const minSize = 64;
   const maxSize = 128;
   return Math.floor(Math.random() * (maxSize - minSize + 1)) + minSize;

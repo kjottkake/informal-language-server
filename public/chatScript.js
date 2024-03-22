@@ -7,27 +7,24 @@ var socket = io('http://localhost:3002');
 
 socket.emit('join-room', roomID); //join room
 
-// Listen for 'word-added' events specifically in this room
-socket.on('word-added', function(data){
-    if(data.room === roomID) {
-      // Add the word to the cloud only if it's meant for this room
-      showWord(data.word, data.translation);
-    }
-  });
+socket.on('word-added', function(data) {
+  if(data.room === roomID) {
+      showWord(data.word, data.translation, data.color, data.size);
+  }
+});
 
-// This function only adds the word to the cloud when received from the server
-function showWord(word, tT) {
-    var wordCloud = document.getElementById('wordCloudBoard');
-    var newWordSpan = document.createElement('span');
-    var newWordDefSpan = document.createElement('span');
-    
-    newWordSpan.style.color = getRandomColor();
-    newWordSpan.style.fontSize = `${getRandomSize()}px`;
-    newWordSpan.textContent = word + "  "; // Add space after word
-    newWordDefSpan.textContent = tT;
+function showWord(word, tT, color, size) {
+  var wordCloud = document.getElementById('wordCloudBoard');
+  var newWordSpan = document.createElement('span');
+  var newWordDefSpan = document.createElement('span');
+  
+  newWordSpan.style.color = color;
+  newWordSpan.style.fontSize = `${size}px`; // Use server-provided size
+  newWordSpan.textContent = word + "  "; // Add space after word
+  newWordDefSpan.textContent = tT;
 
-    wordCloud.appendChild(newWordSpan);
-    wordCloud.appendChild(newWordDefSpan);
+  wordCloud.appendChild(newWordSpan);
+  wordCloud.appendChild(newWordDefSpan);
 }
 
 document.getElementById('wordForm').addEventListener('submit', function(event) {
@@ -57,7 +54,7 @@ document.getElementById('wordForm').addEventListener('submit', function(event) {
 
 function submitWord(word, tT) {
     // Add the word to the cloud locally
-    showWord(word, tT);
+    // showWord(word, tT);
 
     // Emit the event with the word and translation to the server
     socket.emit('add-word', { word: word, translation: tT, room: roomID});
@@ -82,15 +79,3 @@ document.querySelector('.download').addEventListener('click', function() {
   })
   .catch(error => console.error('Error:', error));
 });
-
-function getRandomColor() {
-    const randomColor = Math.floor(Math.random()*16777215).toString(16);
-    return `#${randomColor}`;
-}
-
-function getRandomSize() {
-    // Define the range for your font sizes, e.g., between 12px and 36px
-    const minSize = 64;
-    const maxSize = 128;
-    return Math.floor(Math.random() * (maxSize - minSize + 1)) + minSize;
-}
