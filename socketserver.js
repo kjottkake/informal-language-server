@@ -11,6 +11,11 @@ const { Server } = require("socket.io");
 const io = new Server(server);
 const path = require('path');
 
+const PORT = 3002;
+const vocabObj = {};
+app.use(bodyParser.json());
+app.use(express.static(path.join(__dirname, 'public')));
+
 io.on('connection', (socket) => {
   console.log('a user connected');
 
@@ -28,11 +33,6 @@ io.on('connection', (socket) => {
   })
 
 });
-
-const PORT = 3002;
-const vocabObj = {};
-app.use(bodyParser.json());
-app.use(express.static(path.join(__dirname, 'public')));
 
 // Dynamic namespace creation endpoint
 app.get('/create-namespace', (req, res) => {
