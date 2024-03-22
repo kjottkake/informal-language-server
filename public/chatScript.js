@@ -63,7 +63,7 @@ function submitWord(word, tT) {
     socket.emit('add-word', { word: word, translation: tT, room: roomID});
 }
 
-//download
+//download original, without the individual pdfs. 
 // document.querySelector('.download').addEventListener('click', function() {
 //     fetch('/generate-pdf', {
 //       method: 'GET', // Changed to a GET request since no data is being sent
