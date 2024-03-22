@@ -23,10 +23,16 @@ io.on('connection', (socket) => {
     socket.join(room);  //estbalishing connection with room
   });   //establishing connection with room
   
-  socket.on('add-word', (data) => { //when add-word is called, then do this
+  // socket.on('add-word', (data) => { //when add-word is called, then do this
+  //   console.log('Word received from socket: ', data);
+  //   socket.to(data.room).emit('word-added', data);
+  // });
+  socket.on('add-word', (data) => {
     console.log('Word received from socket: ', data);
+    addWord(data.room, data.word, data.translation);
     socket.to(data.room).emit('word-added', data);
-  });
+});
+
 
   socket.on('disconnect', ()=> { //when a user disconnects, do this. 
     console.log('User disconnected');
@@ -52,32 +58,57 @@ app.get('/room', (req, res) => {
 });
 
 // Route to generate PDF
+// app.get('/generate-pdf', (req, res) => {
+//     const pdf = new PDFDocument();
+//     let filename = 'vocabularylist';
+//     // Setting response to stream back the pdf
+//     filename = encodeURIComponent(filename) + '.pdf';
+//     res.setHeader('Content-disposition', 'attachment; filename="' + filename + '"');
+//     res.setHeader('Content-type', 'application/pdf');
+    
+//     const wordsList = req.body.words; // Assuming words are sent in the request body
+    
+//     pdf.fontSize(12);
+//     for (const original in vocabObj) {
+//       if (vocabObj.hasOwnProperty(original)) {
+//         const translation = vocabObj[original];
+//         // Format: "Original word - Translation"
+//         pdf.text(`${original} - ${translation}`, {
+//           paragraphGap: 5,
+//           indent: 20,
+//           align: 'left',
+//           continued: false,
+//         }).moveDown(0.5);
+//       }
+//     }
+//     pdf.pipe(res);
+//     pdf.end();
+//   });
 app.get('/generate-pdf', (req, res) => {
-    const pdf = new PDFDocument();
-    let filename = 'vocabularylist';
-    // Setting response to stream back the pdf
-    filename = encodeURIComponent(filename) + '.pdf';
-    res.setHeader('Content-disposition', 'attachment; filename="' + filename + '"');
-    res.setHeader('Content-type', 'application/pdf');
-    
-    const wordsList = req.body.words; // Assuming words are sent in the request body
-    
-    pdf.fontSize(12);
-    for (const original in vocabObj) {
-      if (vocabObj.hasOwnProperty(original)) {
-        const translation = vocabObj[original];
-        // Format: "Original word - Translation"
-        pdf.text(`${original} - ${translation}`, {
-          paragraphGap: 5,
-          indent: 20,
-          align: 'left',
-          continued: false,
-        }).moveDown(0.5);
-      }
-    }
-    pdf.pipe(res);
-    pdf.end();
-  });
+  const roomId = req.query.room; // Assume that the room ID is passed as a query parameter
+  const pdf = new PDFDocument();
+  let filename = 'vocabularylist';
+
+  filename = encodeURIComponent(filename) + '.pdf';
+  res.setHeader('Content-disposition', 'attachment; filename="' + filename + '"');
+  res.setHeader('Content-type', 'application/pdf');
+  
+  const wordsList = vocabObj[roomId] || {}; // Get words for the specific room or an empty object if none
+  
+  pdf.fontSize(12);
+  for (const original in wordsList) {
+      const translation = wordsList[original];
+      pdf.text(`${original} - ${translation}`, {
+        paragraphGap: 5,
+        indent: 20,
+        align: 'left',
+        continued: false,
+      }).moveDown(0.5);
+  }
+  pdf.pipe(res);
+  pdf.end();
+});
+
 
 app.post('/translateWord', async (req, res) => {
     const word = req.body.word;
@@ -111,6 +142,13 @@ server.listen(PORT, () => {
 });
 
 //function for adding word to individual list
-function addWord(original, translation){
-    vocabObj[original] = translation;
+// function addWord(original, translation){
+//     vocabObj[original] = translation;
+// }
+function addWord(roomId, original, translation) {
+  if (!vocabObj[roomId]) {
+      vocabObj[roomId] = {}; // Initialize the object for the room if it doesn't exist
+  }
+  vocabObj[roomId][original] = translation;
 }
+

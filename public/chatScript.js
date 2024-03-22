@@ -64,23 +64,43 @@ function submitWord(word, tT) {
 }
 
 //download
+// document.querySelector('.download').addEventListener('click', function() {
+//     fetch('/generate-pdf', {
+//       method: 'GET', // Changed to a GET request since no data is being sent
+//     })
+//     .then(response => response.blob())
+//     .then(blob => {
+//       // Process the response as before
+//       const url = window.URL.createObjectURL(blob);
+//       const a = document.createElement('a');
+//       a.href = url;
+//       a.download = "vocabList.pdf";
+//       document.body.appendChild(a);
+//       a.click();
+//       document.body.removeChild(a);
+//     })
+//     .catch(error => console.error('Error:', error));
+//   });
+
+//new client for new download
 document.querySelector('.download').addEventListener('click', function() {
-    fetch('/generate-pdf', {
-      method: 'GET', // Changed to a GET request since no data is being sent
+  const roomId = params.get('namespace'); // Retrieve room ID like before
+    fetch(`/generate-pdf?room=${encodeURIComponent(roomId)}`, {
+      method: 'GET',
     })
-    .then(response => response.blob())
-    .then(blob => {
-      // Process the response as before
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = "vocabList.pdf";
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-    })
-    .catch(error => console.error('Error:', error));
-  });
+  .then(response => response.blob())
+  .then(blob => {
+    // Process the response as before
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = "vocabList.pdf";
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+  })
+  .catch(error => console.error('Error:', error));
+});
 
 function getRandomColor() {
     const randomColor = Math.floor(Math.random()*16777215).toString(16);
