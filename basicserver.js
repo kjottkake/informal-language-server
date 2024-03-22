@@ -1,10 +1,9 @@
+//server with basic functionaltities, no connection to different rooms
 const express = require('express'); //server operations
 const bodyParser = require('body-parser'); //parses body for stuff
 const axios = require('axios'); //requests
 const PDFDocument = require('pdfkit'); //library to generate pdfs
 const fs = require('fs'); //gets file input
-
-
 
 
 const app = express();

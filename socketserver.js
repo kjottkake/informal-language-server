@@ -1,6 +1,4 @@
 //SERVER CODE
-
-
 const express = require('express'); //server operations
 const bodyParser = require('body-parser'); //parses body for stuff
 const axios = require('axios'); //requests
@@ -16,34 +14,25 @@ const path = require('path');
 io.on('connection', (socket) => {
   console.log('a user connected');
 
-  socket.on('join-room', (room) => { //establishing connection with room?
-    socket.join(room);  //estbalishing connection with room?
-  });   //establishing connection with room?
+  socket.on('join-room', (room) => { //establishing connection with room
+    socket.join(room);  //estbalishing connection with room
+  });   //establishing connection with room
   
-  socket.on('add-word', (data) => {
+  socket.on('add-word', (data) => { //when add-word is called, then do this
     console.log('Word received from socket: ', data);
     socket.to(data.room).emit('word-added', data);
   });
 
-
-  socket.on('disconnect', ()=> {
+  socket.on('disconnect', ()=> { //when a user disconnects, do this. 
     console.log('User disconnected');
   })
 
 });
 
 const PORT = 3002;
-
 const vocabObj = {};
-
 app.use(bodyParser.json());
-
-
-
-// // Your words storage logic remains the same
-// app.use(express.static('public'));
 app.use(express.static(path.join(__dirname, 'public')));
-
 
 // Dynamic namespace creation endpoint
 app.get('/create-namespace', (req, res) => {
@@ -59,10 +48,8 @@ app.get('/create-namespace', (req, res) => {
 
 app.get('/room', (req, res) => {
   // Serve the room HTML, which includes logic to connect to the room's namespace based on the URL's query parameter
-  // res.sendFile(__dirname + '/room.html');
   res.sendFile(path.join(__dirname, 'public', 'room.html'));
 });
-
 
 // Route to generate PDF
 app.get('/generate-pdf', (req, res) => {
@@ -88,7 +75,6 @@ app.get('/generate-pdf', (req, res) => {
         }).moveDown(0.5);
       }
     }
-  
     pdf.pipe(res);
     pdf.end();
   });
@@ -109,7 +95,6 @@ app.post('/translateWord', async (req, res) => {
 
         const translatedText = response.data.translatedText + " "; // Adds space
         
-        // Add to object and array logic remains the same
         addWord(word, translatedText);
         console.log("words object: ", vocabObj);
         // Respond to the client
