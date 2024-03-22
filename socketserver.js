@@ -57,33 +57,6 @@ app.get('/room', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'room.html'));
 });
 
-// Route to generate PDF
-// app.get('/generate-pdf', (req, res) => {
-//     const pdf = new PDFDocument();
-//     let filename = 'vocabularylist';
-//     // Setting response to stream back the pdf
-//     filename = encodeURIComponent(filename) + '.pdf';
-//     res.setHeader('Content-disposition', 'attachment; filename="' + filename + '"');
-//     res.setHeader('Content-type', 'application/pdf');
-    
-//     const wordsList = req.body.words; // Assuming words are sent in the request body
-    
-//     pdf.fontSize(12);
-//     for (const original in vocabObj) {
-//       if (vocabObj.hasOwnProperty(original)) {
-//         const translation = vocabObj[original];
-//         // Format: "Original word - Translation"
-//         pdf.text(`${original} - ${translation}`, {
-//           paragraphGap: 5,
-//           indent: 20,
-//           align: 'left',
-//           continued: false,
-//         }).moveDown(0.5);
-//       }
-//     }
-//     pdf.pipe(res);
-//     pdf.end();
-//   });
 app.get('/generate-pdf', (req, res) => {
   const roomId = req.query.room; // Assume that the room ID is passed as a query parameter
   const pdf = new PDFDocument();
@@ -141,10 +114,6 @@ server.listen(PORT, () => {
     console.log(`Server is running on http://localhost:${PORT}`);
 });
 
-//function for adding word to individual list
-// function addWord(original, translation){
-//     vocabObj[original] = translation;
-// }
 function addWord(roomId, original, translation) {
   if (!vocabObj[roomId]) {
       vocabObj[roomId] = {}; // Initialize the object for the room if it doesn't exist
@@ -152,3 +121,14 @@ function addWord(roomId, original, translation) {
   vocabObj[roomId][original] = translation;
 }
 
+function getRandomColor() {
+  const randomColor = Math.floor(Math.random()*16777215).toString(16);
+  return `#${randomColor}`;
+}
+
+function getRandomSize() {
+  // Define the range for your font sizes, e.g., between 12px and 36px
+  const minSize = 64;
+  const maxSize = 128;
+  return Math.floor(Math.random() * (maxSize - minSize + 1)) + minSize;
+}

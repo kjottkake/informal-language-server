@@ -63,25 +63,6 @@ function submitWord(word, tT) {
     socket.emit('add-word', { word: word, translation: tT, room: roomID});
 }
 
-//download original, without the individual pdfs. 
-// document.querySelector('.download').addEventListener('click', function() {
-//     fetch('/generate-pdf', {
-//       method: 'GET', // Changed to a GET request since no data is being sent
-//     })
-//     .then(response => response.blob())
-//     .then(blob => {
-//       // Process the response as before
-//       const url = window.URL.createObjectURL(blob);
-//       const a = document.createElement('a');
-//       a.href = url;
-//       a.download = "vocabList.pdf";
-//       document.body.appendChild(a);
-//       a.click();
-//       document.body.removeChild(a);
-//     })
-//     .catch(error => console.error('Error:', error));
-//   });
-
 //new client for new download
 document.querySelector('.download').addEventListener('click', function() {
   const roomId = params.get('namespace'); // Retrieve room ID like before
