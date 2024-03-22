@@ -16,6 +16,24 @@ const vocabObj = {};
 app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
+const { MongoClient } = require('mongodb');
+const uri = "mongodb://localhost:27017";
+const client = new MongoClient(uri);
+
+async function connectDB() {
+  try {
+    await client.connect();
+    console.log("Connected to MongoDB");
+
+    
+  } catch (e) {
+    console.error("Failed to connect to MongoDB", e);
+  }
+}
+
+connectDB();
+
+
 io.on('connection', (socket) => {
   console.log('a user connected');
 
@@ -31,6 +49,27 @@ io.on('connection', (socket) => {
     // Emit the event with all data, ensuring consistency across clients
     io.in(data.room).emit('word-added', { word: data.word, translation, color, size, room: data.room });
   });
+
+  socket.on('delete-word', (data) => {
+    console.log('Word to delete: ', data.word);
+    // Delete the word from the vocabulary list
+    delete vocabObj[data.word];
+    // Broadcast the deletion to all other clients
+    socket.broadcast.emit('word-deleted', data.word);
+});
+
+// Handle edit-word event
+socket.on('edit-word', (data) => {
+  console.log(`Editing word: ${data.oldWord} to ${data.newWord}`);
+  // Update the vocabObj with the new word and translation
+  if (vocabObj.hasOwnProperty(data.oldWord)) {
+      delete vocabObj[data.oldWord]; // Remove old word
+  }
+  vocabObj[data.newWord] = data.newTranslation; // Add new word and translation
+
+  // Broadcast the update to all clients
+  socket.broadcast.emit('word-edited', { oldWord: data.oldWord, newWord: data.newWord, newTranslation: data.newTranslation });  
+});
 
 
   socket.on('disconnect', ()=> { //when a user disconnects, do this. 
@@ -122,6 +161,17 @@ function addWord(roomId, original, translation) {
     const size = getRandomSize();
     vocabObj[roomId][original] = { translation, color, size }; // Store translation, color, and size
   }
+
+  const db = client.db("ordcafe");
+  const collection = db.collection('words');
+
+  collection.insertOne({ original: original, translation: translation }, (err, result) => {
+      if (err) {
+          console.error("Error adding word to MongoDB", err);
+      } else {
+          console.log("Added word successfully to MongoDB");
+      }
+  });
 }
 
 
