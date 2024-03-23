@@ -39,22 +39,41 @@ io.on('connection', (socket) => {
 
 });
 
-// Dynamic namespace creation endpoint
+// // Dynamic namespace creation endpoint
+// app.get('/create-namespace', (req, res) => {
+//   const namespace = `/namespace-${Math.random().toString(36).substring(2, 7)}`;
+//   const nsp = io.of(namespace);
+//   nsp.on('connection', (socket) => {
+//     console.log(`someone connected to ${namespace}`);
+//     socket.emit('message', `Room code: ${namespace}`);
+//   });
+//   // Respond with the created namespace
+//   res.json({ namespace });
+// });
 app.get('/create-namespace', (req, res) => {
-  const namespace = `/namespace-${Math.random().toString(36).substring(2, 7)}`;
+  const namespaceId = Math.random().toString(36).substring(2, 7);
+  const namespace = `/namespace-${namespaceId}`;
   const nsp = io.of(namespace);
   nsp.on('connection', (socket) => {
     console.log(`someone connected to ${namespace}`);
     socket.emit('message', `Room code: ${namespace}`);
   });
-  // Respond with the created namespace
-  res.json({ namespace });
+  // Respond with the simpler URL format
+  res.json({ namespaceUrl: `http://localhost:3002/room/${namespaceId}` });
 });
 
-app.get('/room', (req, res) => {
-  // Serve the room HTML, which includes logic to connect to the room's namespace based on the URL's query parameter
+
+
+// app.get('/room', (req, res) => {
+//   // Serve the room HTML, which includes logic to connect to the room's namespace based on the URL's query parameter
+//   res.sendFile(path.join(__dirname, 'public', 'room.html'));
+// });
+// Assuming you have this route to serve the room HTML
+app.get('/room/:namespace', (req, res) => {
+  const namespace = req.params.namespace; // Extract the namespace from the URL path
   res.sendFile(path.join(__dirname, 'public', 'room.html'));
 });
+
 
 app.get('/generate-pdf', (req, res) => {
   const roomId = req.query.room; // Assume that the room ID is passed as a query parameter
