@@ -31,27 +31,25 @@ function showWord(word, tT, color, size) {
 })
 
 // function for editing the words. oops, it also forces you to edit the translated word..
-newWordSpan.addEventListener('click', function() {
-  var action = prompt("Would you like to edit or delete this word? Enter 'edit' or 'delete':", "edit");
-  if (action.toLowerCase() === 'edit') {
-      var newWord = prompt("Enter new word:", word);
-      if (newWord !== null && newWord !== '') {
-          var newTranslation = prompt("Enter new translation:", tT);
-          if (newTranslation !== null && newTranslation !== '') {
-              socket.emit('edit-word', { oldWord: word, newWord: newWord, newTranslation: newTranslation });
-              
-              newWordSpan.textContent = newWord + "  ";
-              newWordDefSpan.textContent = newTranslation;
-          }
-      }
-  } else if (action.toLowerCase() === 'delete') {
-      socket.emit('delete-word', { word: word });
-      wordCloud.removeChild(newWordSpan);
-      wordCloud.removeChild(newWordDefSpan);
-  }
+  newWordSpan.addEventListener('click', function() {
+    var action = prompt("Would you like to edit or delete this word? Enter 'edit' or 'delete':", "edit");
+    if (action.toLowerCase() === 'edit') {
+        var newWord = prompt("Enter new word:", word);
+        if (newWord !== null && newWord !== '') {
+            var newTranslation = prompt("Enter new translation:", tT);
+            if (newTranslation !== null && newTranslation !== '') {
+                socket.emit('edit-word', { oldWord: word, newWord: newWord, newTranslation: newTranslation });
+                
+                newWordSpan.textContent = newWord + "  ";
+                newWordDefSpan.textContent = newTranslation;
+            }
+        }
+    } else if (action.toLowerCase() === 'delete') {
+        socket.emit('delete-word', { word: word });
+        wordCloud.removeChild(newWordSpan);
+        wordCloud.removeChild(newWordDefSpan);
+    }
 });
-
-
 
   wordCloud.appendChild(newWordSpan);
   wordCloud.appendChild(newWordDefSpan);
