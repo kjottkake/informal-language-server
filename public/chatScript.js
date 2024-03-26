@@ -22,6 +22,34 @@ function showWord(word, tT, color, size) {
   newWordSpan.textContent = word + "  ";
   newWordDefSpan.textContent = tT;
 
+   //event listener for deleting a word 
+   newWordSpan.addEventListener('dblclick', function(){
+    socket.emit('delete-word', {word: word}); //emits event to delete the word
+    wordCloud.removeChild(newWordSpan); //removes the word span from the cloud
+    wordCloud.removeChild(newWordDefSpan); //removes the definition span as well
+})
+
+// function for editing the words. oops, it also forces you to edit the translated word..
+  newWordSpan.addEventListener('click', function() {
+    var action = prompt("Would you like to edit or delete this word? Enter 'edit' or 'delete':", "edit");
+    if (action.toLowerCase() === 'edit') {
+        var newWord = prompt("Enter new word:", word);
+        if (newWord !== null && newWord !== '') {
+            var newTranslation = prompt("Enter new translation:", tT);
+            if (newTranslation !== null && newTranslation !== '') {
+                socket.emit('edit-word', { oldWord: word, newWord: newWord, newTranslation: newTranslation });
+                
+                newWordSpan.textContent = newWord + "  ";
+                newWordDefSpan.textContent = newTranslation;
+            }
+        }
+    } else if (action.toLowerCase() === 'delete') {
+        socket.emit('delete-word', { word: word });
+        wordCloud.removeChild(newWordSpan);
+        wordCloud.removeChild(newWordDefSpan);
+    }
+});
+
   wordCloud.appendChild(newWordSpan);
   wordCloud.appendChild(newWordDefSpan);
 }
