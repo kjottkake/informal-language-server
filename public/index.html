@@ -25,7 +25,7 @@
   </div>
 
   <script src="/socket.io/socket.io.js"></script>
-  <script>
+  <!-- <script>
     document.addEventListener('DOMContentLoaded', function () {
       const btn = document.getElementById('createEndpoint');
       btn.addEventListener('click', function () {
@@ -43,7 +43,33 @@
           .catch(error => console.error('Error:', error));
       });
     });
-  </script>
+  </script> -->
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const btn = document.getElementById('createEndpoint');
+      btn.addEventListener('click', function () {
+        fetch('/create-namespace')
+          .then(response => response.json())
+          .then(data => {
+            // Assuming the server now returns `namespaceUrl` that includes the simplified path
+            const namespaceUrl = data.namespaceUrl;
+
+            // Extract just the namespace ID from the URL to connect using Socket.IO on the client side
+            const namespaceId = namespaceUrl.split('/').pop();
+            const socket = io(`/namespace-${namespaceId}`);
+
+            socket.on('message', (msg) => {
+              alert(msg);
+            });
+
+            // Redirect the user to the room using the simplified URL path provided by the server
+            window.location.href = namespaceUrl;
+          })
+          .catch(error => console.error('Error:', error));
+      });
+    });
+</script>
+
 </body>
 
 </html>

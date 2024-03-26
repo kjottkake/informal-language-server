@@ -135,22 +135,25 @@ socket.on('edit-word', (data) => {
 
 });
 
-// Dynamic namespace creation endpoint
 app.get('/create-namespace', (req, res) => {
-  const namespace = `/namespace-${Math.random().toString(36).substring(2, 7)}`;
+  const namespaceId = Math.random().toString(36).substring(2, 7);
+  const namespace = `/namespace-${namespaceId}`;
   const nsp = io.of(namespace);
   nsp.on('connection', (socket) => {
     console.log(`someone connected to ${namespace}`);
     socket.emit('message', `Room code: ${namespace}`);
   });
-  // Respond with the created namespace
-  res.json({ namespace });
+  // Respond with the simpler URL format
+  res.json({ namespaceUrl: `http://localhost:3002/room/${namespaceId}` });
 });
 
-app.get('/room', (req, res) => {
-  // Serve the room HTML, which includes logic to connect to the room's namespace based on the URL's query parameter
+
+
+app.get('/room/:namespace', (req, res) => {
+  const namespace = req.params.namespace; // Extract the namespace from the URL path
   res.sendFile(path.join(__dirname, 'public', 'room.html'));
 });
+
 
 app.get('/generate-pdf', (req, res) => {
   const roomId = req.query.room; // Assume that the room ID is passed as a query parameter
@@ -179,31 +182,33 @@ app.get('/generate-pdf', (req, res) => {
 
 
 app.post('/translateWord', async (req, res) => {
-    const word = req.body.word;
+  const word = req.body.word;
+  const roomId = req.body.roomId; // Get roomId from the request body
 
-    try {
-        const response = await axios.post("http://localhost:5000/translate", {
-            q: word,
-            source: "nb",
-            target: "en",
-            format: "text",
-            api_key: ""
-        }, {
-            headers: { "Content-Type": "application/json" }
-        });
+  try {
+      const response = await axios.post("http://localhost:5000/translate", {
+          q: word,
+          source: "nb",
+          target: "en",
+          format: "text",
+          api_key: ""
+      }, {
+          headers: { "Content-Type": "application/json" }
+      });
 
-        const translatedText = response.data.translatedText + " "; // Adds space
-        
-        addWord(word, translatedText);
-        console.log("words object: ", vocabObj);
-        // Respond to the client
-        res.json({ message: "Word translated and added.", word, translatedText });
+      const translatedText = response.data.translatedText + " "; // Adds space
+      
+      addWord(roomId, word, translatedText); // Pass roomId to addWord
+      console.log("words object: ", vocabObj);
+      // Respond to the client
+      res.json({ message: "Word translated and added.", roomId, word, translatedText });
 
-    } catch (error) {
-        console.error('Error during translation:', error);
-        res.status(500).send('Translation failed.');
-    }
+  } catch (error) {
+      console.error('Error during translation:', error);
+      res.status(500).send('Translation failed.');
+  }
 });
+
 
 server.listen(PORT, () => {
     console.log(`Server is running on http://localhost:${PORT}`);

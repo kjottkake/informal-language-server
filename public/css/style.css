@@ -1,0 +1,108 @@
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f7f7f7;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+  }
+
+  .container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px; /* This adds space between the canvas and the form */
+  }
+
+span {
+  font-size: 3rem;
+}
+
+
+#wordCloudBoard {
+margin-top: 2%;
+width: 95%;
+height: 700px; /* Adjust as needed */
+/* border: 1px solid red; */
+}
+  
+.form-group {
+margin-bottom: 1rem;
+}
+
+label {
+display: block;
+margin-bottom: .5rem;
+color: #333;
+}
+
+input[type="text"],
+button {
+width: 100%;
+padding: .75rem;
+border-radius: 5px;
+border: 1px solid #ddd;
+box-sizing: border-box;
+}
+
+button {
+background-color: #22a6b3;
+color: white;
+border: none;
+margin-top: 1rem;
+cursor: pointer;
+transition: background-color 0.3s ease;
+}
+
+button:hover {
+background-color: #1e90ff;
+}
+
+.download {
+  background-color: #333;
+  width: 20%;
+  position: fixed;
+  top: 0;
+  right: 0;
+  margin-right: 20px; /* Adjust the right margin as needed */
+  margin-top: 20px; 
+}
+
+h1 {
+  margin-left: 2%;
+}
+
+a {
+  text-decoration: none;
+}
+
+a:link {color: black;}      /* unvisited link */
+a:visited {color: black;}   /* visited link */
+a:hover {color: black;}     /* mouse over link */
+a:active {color: black;}    
+
+
+
+/* .l1-column {
+  order: 1;
+}
+
+.l2-column {
+  order: 2;
+} */
+.directions {
+  
+}
+
+.columns {
+  display: flex;
+  flex-wrap: wrap; /* This allows for responsiveness, columns will stack on smaller screens */
+  gap: 10px; /* Adjust the gap between columns */
+}
+
+.l1-column,
+.l2-column {
+  flex: 1; /* This makes both columns equal width */
+  min-width: 220px; /* Adjust minimum width as necessary */
+  /* ... your other styles ... */
+}
