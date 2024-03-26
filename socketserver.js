@@ -49,9 +49,8 @@ io.on('connection', (socket) => {
     socket.join(room);
     const db = client.db("ordcafe");
     const sessionsCollection = db.collection('sessions');
-    const roomsCountCollection = db.collection('roomsCount')
-
-    //updates the room whenever a new user is in
+  
+    // Initialize or update the session document for the room
     sessionsCollection.updateOne(
       { roomId: room },
       {
@@ -59,21 +58,24 @@ io.on('connection', (socket) => {
         $setOnInsert: { createdAt: new Date(), words: [] },
       },
       { upsert: true }
-    );
-
-    // create a roomCounter here!
-
-    roomsCountCollection.updateOne(
-      {},
-      { $inc: { totalRooms: 1 } },
-      { upsert: true } 
-    );
-
-
-
+    ).then(() => {
+      // Now, handle the total rooms counter
+      sessionsCollection.findOneAndUpdate(
+        { counter: "totalRooms" }, // A special document for counting total rooms
+        { $inc: { count: 1 } },
+        { upsert: true, returnDocument: "after" } // Ensure the document exists
+      ).then(result => {
+        if(result.ok) {
+          console.log(`Total rooms updated, new count: ${result.value.count}`);
+        }
+      }).catch(error => {
+        console.error("Error updating total rooms count", error);
+      });
+    });
+  
     console.log(`User joined room: ${room}`);
-  });  //establishing connection with room
-
+  });
+  
 
   // needs work, when user disconnects, the userCount should be decremented by 1
   socket.on('leave-room', (room) => {
@@ -240,6 +242,7 @@ function addWord(roomId, original, translation) {
     }
   );
 }
+
 
 function getRandomColor() {
   const randomColor = Math.floor(Math.random() * 16777215).toString(16);
