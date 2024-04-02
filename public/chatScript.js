@@ -67,7 +67,7 @@ newWordSpan.addEventListener('click', function() {
 //edit button
 saveButton.addEventListener('click', function() {
   var newWordValue = wordInput.value;
-  socket.emit('edit-word', { oldWord: word, newWord: newWordValue });
+  socket.emit('edit-word', { room: roomID, oldWord: word, newWord: newWordValue });
   
   newWordSpan.textContent = newWordValue + "  ";
   popUpForm.style.display = 'none';

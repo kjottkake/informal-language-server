@@ -120,17 +120,39 @@ io.on('connection', (socket) => {
   
 
 // Handle edit-word event, edits word in the cloud, but needs to work when downloading pdf and in db as well as to clients. Only the word itself should be edited and translation should work well
-socket.on('edit-word', (data) => {
-  console.log(`Editing word: ${data.oldWord} to ${data.newWord}`);
+ socket.on('edit-word', (data) => {
+        const { room, oldWord, newWord } = data;
 
-  if (vocabObj.hasOwnProperty(data.oldWord)) {
-      delete vocabObj[data.oldWord];
-  }
-  vocabObj[data.newWord] = true; 
 
-  // Broadcast the update to all clients.. only on one client so far
-  socket.broadcast.emit('word-edited', { oldWord: data.oldWord, newWord: data.newWord });  
-});
+        if (vocabObj[room] && vocabObj[room][oldWord]) {
+          
+            const wordDetails = vocabObj[room][oldWord];
+            delete vocabObj[room][oldWord]; // Remove the old word
+            vocabObj[room][newWord] = wordDetails; // Insert the new word with the old details
+        }
+
+        const db = client.db("ordcafe");
+        const sessionsCollection = db.collection('sessions');
+        
+        console.log(`Attempting to update word in room: ${room}, from '${oldWord}' to '${newWord}'.`);
+
+sessionsCollection.updateOne(
+    { roomId: room, "words.original": oldWord },
+    { $set: { "words.$.original": newWord } }
+)
+.then((result) => {
+    if (result.matchedCount === 1) {
+        console.log(`Word updated: ${oldWord} to ${newWord} in room: ${room}`);
+    } else {
+      // happens if the word is updated more than twice, need to find a way to update it unlimited times
+        console.log(`No matching word found to update. Result: `, result);
+    }
+})
+.catch((error) => {
+    console.error("Error updating word in MongoDB", error);
+
+        });
+    });
 
 
 
