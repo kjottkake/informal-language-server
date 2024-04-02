@@ -76,21 +76,6 @@ io.on('connection', (socket) => {
     console.log(`User joined room: ${room}`);
   });
   
-
-  // needs work, when user disconnects, the userCount should be decremented by 1
-  socket.on('leave-room', (room) => {
-    socket.leave(room);
-    const db = client.db("ordcafe");
-    const sessionsCollection = db.collection('sessions');
-
-    sessionsCollection.updateOne(
-      { roomId: room },
-      { $inc: { userCount: -1 } }
-    );
-
-    //need to make this to user disconnects
-    console.log(`User left room: ${room}`);
-  });
   
   //works as it should
   socket.on('add-word', (data) => {
@@ -108,25 +93,46 @@ io.on('connection', (socket) => {
     io.in(data.room).emit('word-added', data);
   });
 
-  //needs some work to delete the word from db and to be broadcasted to all clients
+
+
+  //db deletion successful, missing pdf and broadcasting 
   socket.on('delete-word', (data) => {
-    console.log('Word to delete: ', data.word);
-    delete vocabObj[data.word];
-    socket.broadcast.emit('word-deleted', data.word);
-});
+    console.log(`Attempting to delete word from roomId: ${data.room}`);
+    const db = client.db("ordcafe");
+    const sessionsCollection = db.collection('sessions');
+  
+    // removing the word from the 'words' array 
+    sessionsCollection.updateOne(
+      { roomId: data.room },
+      { $pull: { words: { original: data.word } } },
+      function(err, result) {
+          if (err) {
+              console.error("Error removing word from session in MongoDB", err);
+              return;
+          }
+
+          io.in(data.room).emit('word-deleted', data.word);
+      }
+    );
+  });
+  
+
+  
 
 // Handle edit-word event, edits word in the cloud, but needs to work when downloading pdf and in db as well as to clients. Only the word itself should be edited and translation should work well
 socket.on('edit-word', (data) => {
   console.log(`Editing word: ${data.oldWord} to ${data.newWord}`);
-  // Update the vocabObj with the new word and translation
+
   if (vocabObj.hasOwnProperty(data.oldWord)) {
-      delete vocabObj[data.oldWord]; // Remove old word
+      delete vocabObj[data.oldWord];
   }
-  vocabObj[data.newWord] = data.newTranslation;
+  vocabObj[data.newWord] = true; 
 
   // Broadcast the update to all clients.. only on one client so far
-  socket.broadcast.emit('word-edited', { oldWord: data.oldWord, newWord: data.newWord, newTranslation: data.newTranslation });  
+  socket.broadcast.emit('word-edited', { oldWord: data.oldWord, newWord: data.newWord });  
 });
+
+
 
 
   socket.on('disconnect', ()=> { //when a user disconnects, do this. 
